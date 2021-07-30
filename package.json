@@ -1,0 +1,37 @@
+{
+  "name": "gestor-de-portapapeles",
+  "version": "1.0.0",
+  "description": "Gestor de portapapeles",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angelgimenez85/Gestor-de-Portapapeles.git"
+  },
+  "keywords": [
+    "aplicación",
+    "escritorio",
+    "portapapeles",
+    "multiplataforma",
+    "electron"
+  ],
+  "author": "Angel Gimenez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/angelgimenez85/Gestor-de-Portapapeles/issues"
+  },
+  "homepage": "https://github.com/angelgimenez85/Gestor-de-Portapapeles#readme",
+  "devDependencies": {
+    "electron": "^13.1.7",
+    "electron-builder": "^22.11.7",
+    "electron-rebuild": "^2.3.5"
+  },
+  "dependencies": {
+    "bootstrap": "^4.5.2",
+    "dexie": "^3.0.3",
+    "electron-settings": "^4.0.2",
+    "jquery": "^3.5.1"
+  }
+}
