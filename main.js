@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, tray, Menu, globalShorcut } = require('electron');
+const { app, BrowserWindow, ipcMain, tray, Menu, globalShorcut, Tray } = require('electron');
 const path = require('path');
 const settings = require('electron-settings');
 
@@ -42,4 +42,35 @@ async function iniciarAplicacion() {
 
     atajoTecladoVentana.setMenuBarVisibility(false);
     atajoTecladoVentana.loadFile('atajoTeclado.html');
+
+    atajoTecladoVentana.on('close', (evento) => {
+        if (!app.isQuiting) {
+            evento.preventDefault();
+            atajoTecladoVentana.hide();
+        }
+        return false;
+    });
+
+    ventanaPrincipal.on('minimize', (evento) => {
+        evento.preventDefault();
+        atajoTecladoVentana.hide();
+    });
+
+    ventanaPrincipal.on('close', (evento) => {
+        if (!app.isQuiting) {
+            evento.preventDefault();
+            atajoTecladoVentana.hide();
+        }
+    });
+
+    const iconos = {
+        darwin: 'images/16x16.png',
+        linux: 'images/64x64.png',
+        win32: 'images/64x64.png'
+    };
+
+    // Establecer icono de notificación dependiendo del sistema
+    let areaBandeja = new Tray(path.join(__dirname, iconos[process.platform]));
+    areaBandeja.setToolTip('Mostrar el historial del portapapeles');
 }
+
