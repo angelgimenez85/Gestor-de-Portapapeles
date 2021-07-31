@@ -94,9 +94,9 @@ async function iniciarAplicacion() {
     let menuContextual = Menu.buildFromTemplate(plantillaOperaciones);
     areaBandeja.setContextMenu(menuContextual);
 
-    let atajoTecladoGlobal = await settings.get('globalShortcut');
+    let atajoTecladoGlobal = await settings.get('atajoTecladoGlobal');
     if (!atajoTecladoGlobal) {
-        await settings.set('globalShortcut', 'CmdOrCtrl+Alt+Shift+Up');
+        await settings.set('atajoTecladoGlobal', 'CmdOrCtrl+Alt+Shift+Up');
         atajoTecladoGlobal = 'CmdOrCtrl+Alt+Shift+Up';
     }
 
