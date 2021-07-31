@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, tray, Menu, globalShorcut, Tray } = require('electron');
+const { app, BrowserWindow, ipcMain, tray, Menu, globalShorcut, Tray, clipboard } = require('electron');
 const path = require('path');
 const settings = require('electron-settings');
 
@@ -106,3 +106,24 @@ async function iniciarAplicacion() {
     });
 }
 
+function alternarTeclado() {
+    let seleccionContenido = clipboard.readText('selection');
+    clipboard.writeText('JavaScript', 'selection');
+    seleccionContenido = clipboard.readText('selection');
+}
+
+app.whenReady().then(iniciarAplicacion);
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        iniciarAplicacion();
+    }
+});
+
+ipcMain.on('finalizar-aplicacion', () => {
+    app.exit();
+});
