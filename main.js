@@ -65,13 +65,13 @@ async function iniciarAplicacion() {
 
     ventanaPrincipal.on('minimize', (e) => {
         e.preventDefault();
-        ventanaAtajoTeclado.hide();
+        ventanaPrincipal.hide();
     });
 
     ventanaPrincipal.on('close', (e) => {
         if (!app.isQuiting) {
             e.preventDefault();
-            ventanaAtajoTeclado.hide();
+            ventanaPrincipal.hide();
         }
     });
 

@@ -27,7 +27,9 @@ document.body.addEventListener('keyup', function(evento) {
             teclasAtajoTeclado.push(evento.key);
         }
 
-        atajoTeclado.value = teclasAtajoTeclado.join('+').replace('Control', 'CmdOrCtrl').replace('Arrow', '');
+        atajoTeclado.value = teclasAtajoTeclado.join('+')
+                                .replace('Control', 'CmdOrCtrl')
+                                .replace('Arrow', '');
 
         return true;
     }
