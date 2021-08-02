@@ -1,6 +1,14 @@
-const { app, BrowserWindow, ipcMain, tray, Menu, globalShorcut, Tray, clipboard } = require('electron');
+const { 
+    app,
+    BrowserWindow, 
+    globalShortcut, 
+    ipcMain, 
+    Menu, 
+    Tray 
+} = require('electron');
 const path = require('path');
 const settings = require('electron-settings');
+
 
 // Si ya existe una ejecución en curso
 if (!app.requestSingleInstanceLock()) {
@@ -11,7 +19,7 @@ async function iniciarAplicacion() {
     const ventanaPrincipal = new BrowserWindow({
         width: 400,
         height: 650,
-        frame: false,
+        frame: true,
         resizable: false,
         minimizable: false,
         maximizable: false,
@@ -19,14 +27,16 @@ async function iniciarAplicacion() {
         title: 'Clips de portapapeles',
         webPreferences: {
             preload: path.join(__dirname, 'js', 'preload.js'),
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
         }
     });
 
-    ventanaPrincipal.setMenuBarVisibility(false);
+    ventanaPrincipal.setMenuBarVisibility(true);
     ventanaPrincipal.loadFile('index.html');
 
-    const atajoTecladoVentana = new BrowserWindow({
+    const ventanaAtajoTeclado = new BrowserWindow({
         width: 400,
         height: 650,
         frame: false,
@@ -36,30 +46,32 @@ async function iniciarAplicacion() {
         show: false,
         title: 'Atajo de teclado',
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
         }
     });
 
-    atajoTecladoVentana.setMenuBarVisibility(false);
-    atajoTecladoVentana.loadFile('atajoTeclado.html');
+    ventanaAtajoTeclado.setMenuBarVisibility(false);
+    ventanaAtajoTeclado.loadFile('atajoTeclado.html');
 
-    atajoTecladoVentana.on('close', (evento) => {
+    ventanaAtajoTeclado.on('close', (e) => {
         if (!app.isQuiting) {
-            evento.preventDefault();
-            atajoTecladoVentana.hide();
+            e.preventDefault();
+            ventanaAtajoTeclado.hide();
         }
         return false;
     });
 
-    ventanaPrincipal.on('minimize', (evento) => {
-        evento.preventDefault();
-        atajoTecladoVentana.hide();
+    ventanaPrincipal.on('minimize', (e) => {
+        e.preventDefault();
+        ventanaAtajoTeclado.hide();
     });
 
-    ventanaPrincipal.on('close', (evento) => {
+    ventanaPrincipal.on('close', (e) => {
         if (!app.isQuiting) {
-            evento.preventDefault();
-            atajoTecladoVentana.hide();
+            e.preventDefault();
+            ventanaAtajoTeclado.hide();
         }
     });
 
@@ -80,7 +92,7 @@ async function iniciarAplicacion() {
         },
         {
             label: 'Cambiar atajo de teclado',
-            click: () => atajoTecladoVentana.show()
+            click: () => ventanaAtajoTeclado.show()
         },
         {
             type: 'separator'
@@ -95,30 +107,28 @@ async function iniciarAplicacion() {
     areaBandeja.setContextMenu(menuContextual);
 
     let atajoTecladoGlobal = await settings.get('atajoTecladoGlobal');
+
     if (!atajoTecladoGlobal) {
         await settings.set('atajoTecladoGlobal', 'CmdOrCtrl+Alt+Shift+Up');
         atajoTecladoGlobal = 'CmdOrCtrl+Alt+Shift+Up';
     }
 
-    globalShorcut.register(atajoTecladoGlobal, () => {
+    globalShortcut.register(atajoTecladoGlobal, () => {
         areaBandeja.focus();
         ventanaPrincipal.show();
     });
-}
 
-function alternarTeclado() {
-    let seleccionContenido = clipboard.readText('selection');
-    clipboard.writeText('JavaScript', 'selection');
-    seleccionContenido = clipboard.readText('selection');
 }
 
 app.whenReady().then(iniciarAplicacion);
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }    
 });
 
-app.on('activate', () => {
+app.on('active', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         iniciarAplicacion();
     }
@@ -126,4 +136,9 @@ app.on('activate', () => {
 
 ipcMain.on('finalizar-aplicacion', () => {
     app.exit();
+});
+
+app.on('quit', () => {
+    //globalShortcut.unregister('CmdOrCtrl+Alt+Shift+Up');
+    //globalShortcut.unregisterAll();
 });

@@ -1,13 +1,12 @@
 const { remote, ipcRenderer } = require('electron');
-const jQuery = require('jquery');
+const jquery = require('jquery');
 const settings = require('electron-settings');
 
 let atajoTeclado = document.querySelector('input');
 let btnReestablecer = document.querySelector("button[type='reset']");
-let btnGuardarAtajoTeclado = document.querySelector("button[type='reset']");
+let btnGuardarAtajoTeclado = document.querySelector("button[type='submit']");
 
-
-remote.getCurrentWindow().on('show', async () => {
+remote.getCurrentWindow().on('show', async function() {
     atajoTeclado.focus();
 
     atajoTeclado.value = await settings.get('atajoTecladoGlobal');
@@ -15,34 +14,34 @@ remote.getCurrentWindow().on('show', async () => {
 
 let teclasAtajoTeclado = [];
 
-document.body.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
+document.body.addEventListener('keyup', function(evento) {
+    if (evento.key === 'Enter') {
 
-    } else if (e.key === 'Escape') {
+    } else if (evento.key === 'Escape') {
         atajoTeclado.value = '';
         remote.getCurrentWindow().close();
     } else {
         atajoTeclado.focus();
 
-        if (teclasAtajoTeclado.indexOf(e.key) === -1) {
-            teclasAtajoTeclado.push(e.key);
+        if (teclasAtajoTeclado.indexOf(evento.key) === -1) {
+            teclasAtajoTeclado.push(evento.key);
         }
 
-        atajoTeclado.value = teclasAtajoTeclado.join('+')
-                                .replace('Control', 'CmdOrCtrl')
-                                .replace('Arrow', '');
+        atajoTeclado.value = teclasAtajoTeclado.join('+').replace('Control', 'CmdOrCtrl').replace('Arrow', '');
+
         return true;
     }
 });
 
-jQuery(btnReestablecer).on('click', () => {
+jquery(btnReestablecer).on('click', function() {
     atajoTeclado.value = '';
     teclasAtajoTeclado = [];
     atajoTeclado.focus();
 });
 
-jQuery(btnGuardarAtajoTeclado).on('click', async () => {
+jquery(btnGuardarAtajoTeclado).on('click', async function() {
     await settings.set('atajoTecladoGlobal', atajoTeclado.value);
+
     atajoTeclado.focus();
     remote.getCurrentWindow().close();
     ipcRenderer.send('finalizar-aplicacion');
