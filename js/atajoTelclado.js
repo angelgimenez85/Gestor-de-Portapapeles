@@ -1,4 +1,4 @@
-const { clipboard, remote, globalshortcut, ipcRenderer } = require('electron');
+const { remote, ipcRenderer } = require('electron');
 const jQuery = require('jquery');
 const settings = require('electron-settings');
 
