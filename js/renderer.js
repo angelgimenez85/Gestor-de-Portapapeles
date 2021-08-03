@@ -1,35 +1,27 @@
 const { clipboard, remote } = require('electron');
-const jQuery = require('jquery');
 const Dexie = require('dexie');
 const popupS = require('popups');
-
 
 
 Dexie.debug = true;
 const bd = new Dexie('historial');
 
-//const dato = jQuery('#dato');
 const dato = document.querySelector('input');
 
-dato.addEventListener('focus', () => {	   
-    dato.select();
+dato.addEventListener('focusin', function(){	   
+    this.select();
 });
 
-//const tablaPortapapeles = jQuery('#tablaPortapapeles');
 const tablaPortapapeles = document.querySelector('table');
 
-//tablaPortapapeles.on('click', cambiarDatoSeleccionado);
 tablaPortapapeles.addEventListener('click', cambiarDatoSeleccionado);
 
 remote.getCurrentWindow().on('show', () => {
-    //dato.trigger('focus');
     dato.focus();
 });
 
-//jQuery('body').on('keydown', (e) => {
 document.body.addEventListener('keydown', (e) => {
 
-    //const filas = Array.from(jQuery('tr td:first-child'));
     let filas = Array.from(document.querySelectorAll('tr td:first-child'));
     let indice = filas.indexOf(document.activeElement);
 
@@ -50,7 +42,6 @@ document.body.addEventListener('keydown', (e) => {
         remote.getCurrentWindow().close();
 
     } else {
-        //dato.trigger('focus');
         dato.focus();
         refrescarVista();
     }
@@ -86,13 +77,11 @@ function refrescarVista() {
         })
         .toArray()
         .then((h) => {
-            //jQuery(tablaPortapapeles).remove();
             tablaPortapapeles.innerHTML = '';
 
             let indice = 0;
 
             h.forEach((elem) => {
-                //const tr = jQuery('<tr>');
                 const fila = document.createElement('tr');
                 ++indice;
                 fila.innerHTML = `<tr class="registros">
@@ -103,13 +92,9 @@ function refrescarVista() {
                                         </button>
                                     </td>
                                     </tr>`;
-                //tr.append(`<tr>
-                //            <td tabindex="${indice}" id="${elem.id}"></td>
-                //            <td><button id="${e.id}">&#10006;</button></td>
-                //            </tr>`);
-                fila.querySelector('td').innerText = cortarTextoConPuntos(elem.texto.replace(/\n/g, ' '), 50);
-                fila.addEventListener('click', mostrarTextoCompleto);
-                //tablaPortapapeles.append(tr);
+                const celda = fila.querySelector('td')
+                celda.innerText = cortarTextoConPuntos(elem.texto.replace(/\n/g, ' '), 50);
+                celda.addEventListener('click', mostrarTextoCompleto);
                 tablaPortapapeles.appendChild(fila);
             });
         });

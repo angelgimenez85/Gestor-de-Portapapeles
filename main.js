@@ -19,11 +19,11 @@ async function iniciarAplicacion() {
     const ventanaPrincipal = new BrowserWindow({
         width: 400,
         height: 650,
-        frame: true,
-        resizable: true,
-        minimizable: true,
-        maximizable: true,
-        show: true,
+        frame: false,
+        resizable: false,
+        minimizable: false,
+        maximizable: false,
+        show: false,
         title: 'Clips de portapapeles',
         icon: __dirname + '/images/16x16.png',
         webPreferences: {
