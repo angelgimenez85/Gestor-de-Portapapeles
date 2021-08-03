@@ -4,6 +4,7 @@
   "description": "Gestor de portapapeles",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -29,9 +30,11 @@
     "electron-rebuild": "^2.3.5"
   },
   "dependencies": {
+    "@electron/remote": "^1.2.1",
     "bootstrap": "^4.5.2",
     "dexie": "^3.0.3",
     "electron-settings": "^4.0.2",
-    "jquery": "^3.5.1"
+    "jquery": "^3.5.1",
+    "popups": "^1.1.3"
   }
 }
