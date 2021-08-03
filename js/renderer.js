@@ -1,6 +1,7 @@
 const { clipboard, remote } = require('electron');
 const jQuery = require('jquery');
 const Dexie = require('dexie');
+const popupS = require('popups');
 
 
 
@@ -9,6 +10,10 @@ const bd = new Dexie('historial');
 
 //const dato = jQuery('#dato');
 const dato = document.querySelector('input');
+
+dato.addEventListener('focus', () => {	   
+    dato.select();
+});
 
 //const tablaPortapapeles = jQuery('#tablaPortapapeles');
 const tablaPortapapeles = document.querySelector('table');
@@ -90,15 +95,20 @@ function refrescarVista() {
                 //const tr = jQuery('<tr>');
                 const fila = document.createElement('tr');
                 ++indice;
-                fila.innerHTML = `<tr>
+                fila.innerHTML = `<tr class="registros">
                                     <td tabindex="${indice}" id="${elem.id}"></td>
-                                    <td><button id="${elem.id}">&#10006;</button></td>
+                                    <td class="align-middle">
+                                        <button class="btn btn-danger btn-sm" id="${elem.id}">
+                                            &#10006;
+                                        </button>
+                                    </td>
                                     </tr>`;
                 //tr.append(`<tr>
                 //            <td tabindex="${indice}" id="${elem.id}"></td>
                 //            <td><button id="${e.id}">&#10006;</button></td>
                 //            </tr>`);
-                fila.querySelector('td').innerText = elem.texto.replace(/\n/g, ' ');
+                fila.querySelector('td').innerText = cortarTextoConPuntos(elem.texto.replace(/\n/g, ' '), 50);
+                fila.addEventListener('click', mostrarTextoCompleto);
                 //tablaPortapapeles.append(tr);
                 tablaPortapapeles.appendChild(fila);
             });
@@ -117,3 +127,33 @@ setTimeout(async () => {
         }
     }, 200);
 });
+
+function cortarTextoConPuntos(texto, limite) {
+
+    if(texto.length > limite)   {
+        texto = texto.substring(0,limite) + "...";
+    }
+
+    return texto;
+}
+
+async function mostrarTextoCompleto(e) {
+    const texto = (await bd.historial.get(parseInt(e.target.id))).texto;
+    popupS.window({
+        mode: 'modal',
+        content: escapeHTML(texto)
+    });
+}
+
+function escapeHTML(html) {
+    var fn=function(tag) {
+        var charsToReplace = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&#34;'
+        };
+        return charsToReplace[tag] || tag;
+    }
+    return html.replace(/[&<>"]/g, fn);
+}
